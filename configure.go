@@ -425,7 +425,9 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 	}
 
 	fmt.Fprintf(writer, "TARGET = %s\n", target)
-	fmt.Fprintf(writer, "\nSOURCES = $(wildcard *.go)\n\n")
+	io.WriteString(writer, "\nSOURCES = $(subst configure.go,,$(wildcard *.go))")
+
+	io.WriteString(writer, "\n\n")
 
 	io.WriteString(writer, "# Rules\n")
 	io.WriteString(writer, "$(TARGET): $(SOURCES)\n")
