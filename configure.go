@@ -372,7 +372,7 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 				if i == 0 {
 					vars = append([]*expandString{v}, vars...)
 				} else {
-					vars = append(append(vars[0:i-1], v), tail...)
+					vars = append(append(vars[0:i], v), tail...)
 				}
 
 				inserted = true
