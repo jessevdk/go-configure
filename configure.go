@@ -29,6 +29,7 @@ type Options struct {
 	BinDir        string `long:"bindir" description:"user executables"`
 	LibExecDir    string `long:"libexecdir" description:"program executables"`
 	SysConfDir    string `long:"sysconfdir" description:"read-only single-machine data"`
+	LibDir        string `long:"libdir" description:"program executables"`
 	DataRootDir   string `long:"datarootdir" description:"read-only arch.-independent data root"`
 	DataDir       string `long:"datadir" description:"read-only arc.-independent data"`
 	ManDir        string `long:"mandir" description:"man documentation"`
@@ -41,6 +42,7 @@ func NewOptions() *Options {
 		ExecPrefix:    "${prefix}",
 		BinDir:        "${execprefix}/bin",
 		LibExecDir:    "${execprefix}/libexec",
+		LibDir:        "${execprefix}/lib",
 		SysConfDir:    "${prefix}/etc",
 		DataRootDir:   "${prefix}/share",
 		DataDir:       "${datarootdir}",
