@@ -26,8 +26,8 @@ import (
 type Options struct {
 	Prefix        string `long:"prefix" description:"install architecture-independent files in PREFIX"`
 	ExecPrefix    string `long:"execprefix" description:"install architecture-dependent files in EPREFIX"`
-	BinDir        string `long:"binprefix" description:"user executables"`
-	LibExecPrefix string `long:"libexecprefix" description:"program executables"`
+	BinDir        string `long:"bindir" description:"user executables"`
+	LibExecDir    string `long:"libexecdir" description:"program executables"`
 	SysConfDir    string `long:"sysconfdir" description:"read-only single-machine data"`
 	DataRootDir   string `long:"datarootdir" description:"read-only arch.-independent data root"`
 	DataDir       string `long:"datadir" description:"read-only arc.-independent data"`
@@ -40,7 +40,7 @@ func NewOptions() *Options {
 		Prefix:        "/usr/local",
 		ExecPrefix:    "${prefix}",
 		BinDir:        "${execprefix}/bin",
-		LibExecPrefix: "${execprefix}/lib",
+		LibExecDir:    "${execprefix}/libexec",
 		SysConfDir:    "${prefix}/etc",
 		DataRootDir:   "${prefix}/share",
 		DataDir:       "${datarootdir}",
@@ -429,10 +429,10 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 	io.WriteString(writer, "distclean: clean\n\n")
 
 	io.WriteString(writer, "install: $(TARGET)\n")
-	io.WriteString(writer, "\tmkdir -p $(DESTDIR)$(binprefix) && cp $(TARGET) $(DESTDIR)$(binprefix)/$(TARGET)\n\n")
+	io.WriteString(writer, "\tmkdir -p $(DESTDIR)$(bindir) && cp $(TARGET) $(DESTDIR)$(bindir)/$(TARGET)\n\n")
 
 	io.WriteString(writer, "uninstall:\n")
-	io.WriteString(writer, "\trm -f $(DESTDIR)$(binprefix)/$(TARGET)\n\n")
+	io.WriteString(writer, "\trm -f $(DESTDIR)$(bindir)/$(TARGET)\n\n")
 
 	io.WriteString(writer, ".PHONY: install uninstall distclean clean")
 }
