@@ -385,25 +385,44 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 		}
 	}
 
-	if len(vars) > 0 {
-		io.WriteString(writer, "# Variables\n")
+	io.WriteString(writer, "# Variables\n")
 
-		for _, v := range vars {
-			fmt.Fprintf(writer, "%s = ", v.Name)
+	for _, v := range vars {
+		fmt.Fprintf(writer, "%s = ", v.Name)
 
-			for _, part := range v.Parts {
-				if part.IsVariable {
-					fmt.Fprintf(writer, "$(%s)", part.Value)
-				} else {
-					fmt.Fprintf(writer, "%s", part.Value)
-				}
+		for _, part := range v.Parts {
+			if part.IsVariable {
+				fmt.Fprintf(writer, "$(%s)", part.Value)
+			} else {
+				fmt.Fprintf(writer, "%s", part.Value)
 			}
-
-			io.WriteString(writer, "\n")
 		}
 
 		io.WriteString(writer, "\n")
 	}
+
+	io.WriteString(writer, "version = ")
+
+	for i, v := range Version {
+		if i != 0 {
+			io.WriteString(writer, ".")
+		}
+
+		fmt.Fprintf(writer, "%v", v)
+	}
+
+	io.WriteString(writer, "\n")
+	fmt.Fprintf(writer, "major_version = %v\n", Version[0])
+
+	if len(Version) > 1 {
+		fmt.Fprintf(writer, "minor_version = %v\n", Version[0])
+	}
+
+	if len(Version) > 2 {
+		fmt.Fprintf(writer, "micro_version = %v\n", Version[0])
+	}
+
+	io.WriteString(writer, "\n")
 
 	target := Target
 
