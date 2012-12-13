@@ -236,7 +236,7 @@ func Configure(data interface{}) (*Config, error) {
 			filename += ".go"
 		}
 
-		f, err := os.Create(ret.absPath(filename))
+		f, err := os.Create(filename)
 
 		if err != nil {
 			return nil, err
@@ -247,7 +247,7 @@ func Configure(data interface{}) (*Config, error) {
 	}
 
 	if len(Makefile) != 0 {
-		f, err := os.Create(ret.absPath(Makefile))
+		f, err := os.Create(Makefile)
 
 		if err != nil {
 			return nil, err
@@ -274,16 +274,6 @@ func Configure(data interface{}) (*Config, error) {
 // Expand expands the variable value indicated by name
 func (x *Config) Expand(name string) string {
 	return x.expanded[name].expand(x.expanded)
-}
-
-func (x *Config) absPath(filename string) string {
-	if path.IsAbs(filename) {
-		return filename
-	}
-
-	wd, _ := os.Getwd()
-
-	return path.Clean(path.Join(wd, path.Dir(os.Args[0]), filename))
 }
 
 // WriteGoConfig writes the go configuration file containing all the variable
