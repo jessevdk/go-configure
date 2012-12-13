@@ -217,7 +217,7 @@ func Configure(data interface{}) (*Config, error) {
 		data = NewOptions()
 	}
 
-	parser := flags.NewParser(data, flags.PrintErrors)
+	parser := flags.NewParser(data, flags.PrintErrors | flags.IgnoreUnknown)
 
 	if _, err := parser.Parse(); err != nil {
 		return nil, err
