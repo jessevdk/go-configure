@@ -367,7 +367,8 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 		// Insert into vars based on dependencies
 		for i, vv := range vars {
 			if vv.dependsOn(name) {
-				tail := vars[i:]
+				tail := make([]*expandString, len(vars)-i)
+				copy(tail, vars[i:])
 
 				if i == 0 {
 					vars = append([]*expandString{v}, vars...)
