@@ -54,7 +54,7 @@ func NewOptions() *Options {
 var Package = "main"
 
 // Makefile is the filename of the makefile that will be generated
-var Makefile = "Makefile"
+var Makefile = "go.make"
 
 // GoConfig is the filename of the go file that will be generated containing
 // all the variable values.
@@ -255,6 +255,17 @@ func Configure(data interface{}) (*Config, error) {
 
 		ret.WriteMakefile(f)
 		f.Close()
+
+		os.Chmod(Makefile, 0755)
+
+		f, err = os.OpenFile(path.Join(path.Dir(Makefile), "Makefile"),
+		                     os.O_CREATE | os.O_EXCL | os.O_WRONLY,
+		                     0644)
+
+		if err == nil {
+			fmt.Fprintf(f, "include %s\n", path.Base(Makefile))
+			f.Close()
+		}
 	}
 
 	return ret, nil
@@ -355,6 +366,7 @@ func (x *Config) WriteGoConfig(writer io.Writer) {
 // uninstall rules.
 func (x *Config) WriteMakefile(writer io.Writer) {
 	// Write a very basic makefile
+	io.WriteString(writer, "#!/usr/bin/make -f\n\n")
 
 	vars := make([]*expandString, 0, len(x.expanded))
 
