@@ -18,6 +18,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"runtime"
 )
 
 // Options contains all the standard configure options to specify various
@@ -407,17 +408,20 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 	target := Target
 
 	if len(target) == 0 {
-		arg := os.Args[0]
-		var rpath string
+		pc := make([]uintptr, 3)
+		n := runtime.Callers(1, pc)
 
-		if path.IsAbs(arg) {
-			rpath = arg
-		} else {
-			wd, _ := os.Getwd()
-			rpath = path.Clean(path.Join(wd, os.Args[0]))
+		me, _ := runtime.FuncForPC(pc[0]).FileLine(pc[0])
+
+		for i := 1; i < n; i++ {
+			f := runtime.FuncForPC(pc[i])
+			fname, _ := f.FileLine(pc[i])
+
+			if fname != me {
+				target = path.Base(path.Dir(fname))
+				break
+			}
 		}
-
-		target = path.Base(path.Dir(rpath))
 	}
 
 	fmt.Fprintf(writer, "TARGET = %s\n", target)
