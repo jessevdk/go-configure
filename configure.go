@@ -454,7 +454,7 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 
 	io.WriteString(writer, "# Rules\n")
 	io.WriteString(writer, "$(TARGET): $(SOURCES_UNIQUE)\n")
-	io.WriteString(writer, "\tgo build -o $@ $^\n\n")
+	io.WriteString(writer, "\tgo build -o $@\n\n")
 
 	io.WriteString(writer, "clean:\n")
 	io.WriteString(writer, "\trm -f $(TARGET)\n\n")
