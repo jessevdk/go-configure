@@ -445,13 +445,16 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 	}
 
 	fmt.Fprintf(writer, "TARGET = %s\n", target)
-	io.WriteString(writer, "\nSOURCES = $(wildcard *.go)")
+
+	io.WriteString(writer, "\nSOURCES ?=")
+	io.WriteString(writer, "\nSOURCES += $(wildcard *.go)")
+	io.WriteString(writer, "\nSOURCES_UNIQUE = $(sort $(SOURCES))")
 
 	io.WriteString(writer, "\n\n")
 
 	io.WriteString(writer, "# Rules\n")
-	io.WriteString(writer, "$(TARGET): $(SOURCES)\n")
-	io.WriteString(writer, "\tgo build -o $(TARGET) $(SOURCES)\n\n")
+	io.WriteString(writer, "$(TARGET): $(SOURCES_UNIQUE)\n")
+	io.WriteString(writer, "\tgo build -o $@ $^\n\n")
 
 	io.WriteString(writer, "clean:\n")
 	io.WriteString(writer, "\trm -f $(TARGET)\n\n")
