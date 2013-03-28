@@ -416,11 +416,11 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 	fmt.Fprintf(writer, "major_version = %v\n", Version[0])
 
 	if len(Version) > 1 {
-		fmt.Fprintf(writer, "minor_version = %v\n", Version[0])
+		fmt.Fprintf(writer, "minor_version = %v\n", Version[1])
 	}
 
 	if len(Version) > 2 {
-		fmt.Fprintf(writer, "micro_version = %v\n", Version[0])
+		fmt.Fprintf(writer, "micro_version = %v\n", Version[2])
 	}
 
 	io.WriteString(writer, "\n")
