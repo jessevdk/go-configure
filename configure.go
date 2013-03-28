@@ -461,8 +461,7 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 
 	io.WriteString(writer, "distclean: clean\n\n")
 
-
-	io.WriteString(Writer, "$(TARGET)_installdir ?= $(bindir)\n\n")
+	io.WriteString(writer, "$(TARGET)_installdir ?= $(bindir)\n\n")
 
 	io.WriteString(writer, "install: $(TARGET)\n")
 	io.WriteString(writer, "\tmkdir -p $(DESTDIR)$($(TARGET)_installdir) && cp $(TARGET) $(DESTDIR)$($(TARGET)_installdir)/$(TARGET)\n\n")
