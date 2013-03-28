@@ -461,11 +461,14 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 
 	io.WriteString(writer, "distclean: clean\n\n")
 
+
+	io.WriteString(Writer, "$(TARGET)_installdir ?= $(bindir)\n\n")
+
 	io.WriteString(writer, "install: $(TARGET)\n")
-	io.WriteString(writer, "\tmkdir -p $(DESTDIR)$(bindir) && cp $(TARGET) $(DESTDIR)$(bindir)/$(TARGET)\n\n")
+	io.WriteString(writer, "\tmkdir -p $(DESTDIR)$($(TARGET)_installdir) && cp $(TARGET) $(DESTDIR)$($(TARGET)_installdir)/$(TARGET)\n\n")
 
 	io.WriteString(writer, "uninstall:\n")
-	io.WriteString(writer, "\trm -f $(DESTDIR)$(bindir)/$(TARGET)\n\n")
+	io.WriteString(writer, "\trm -f $(DESTDIR)$($(TARGET)_installdir)/$(TARGET)\n\n")
 
 	io.WriteString(writer, ".PHONY: install uninstall distclean clean")
 }
