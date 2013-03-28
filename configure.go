@@ -389,7 +389,7 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 	io.WriteString(writer, "# Variables\n")
 
 	for _, v := range vars {
-		fmt.Fprintf(writer, "%s = ", v.Name)
+		fmt.Fprintf(writer, "%s ?= ", v.Name)
 
 		for _, part := range v.Parts {
 			if part.IsVariable {
@@ -402,7 +402,7 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 		io.WriteString(writer, "\n")
 	}
 
-	io.WriteString(writer, "version = ")
+	io.WriteString(writer, "version ?= ")
 
 	for i, v := range Version {
 		if i != 0 {
@@ -444,7 +444,7 @@ func (x *Config) WriteMakefile(writer io.Writer) {
 		}
 	}
 
-	fmt.Fprintf(writer, "TARGET = %s\n", target)
+	fmt.Fprintf(writer, "TARGET ?= %s\n", target)
 
 	io.WriteString(writer, "\nSOURCES ?=")
 	io.WriteString(writer, "\nSOURCES += $(wildcard *.go)")
