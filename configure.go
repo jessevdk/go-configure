@@ -14,7 +14,6 @@ import (
 	"io"
 	"os"
 	"path"
-	"reflect"
 	"regexp"
 	"sort"
 	"strings"
@@ -136,20 +135,33 @@ func (x *expandString) expand(m map[string]*expandString) string {
 type Config struct {
 	*flags.Parser
 
-	values   map[string]interface{}
+	values []*flags.Option
+	valuesMap   map[string]*flags.Option
 	expanded map[string]*expandString
 }
 
-func (x *Config) extract() map[string]interface{} {
-	ret := make(map[string]interface{})
+func eachGroup(g *flags.Group, f func(g *flags.Group)) {
+	f(g)
 
-	for _, grp := range x.Parser.Groups {
-		for longname, option := range grp.LongNames {
-			ret[longname] = option.Value.Interface()
-		}
+	for _, gg := range g.Groups() {
+		eachGroup(gg, f)
 	}
+}
 
-	return ret
+func (x *Config) extract() ([]*flags.Option, map[string]*flags.Option) {
+	valuesmap := make(map[string]*flags.Option)
+	var values []*flags.Option
+
+	eachGroup(x.Parser.Command.Group, func(g *flags.Group) {
+		for _, option := range g.Options() {
+			if len(option.LongName) > 0 {
+				valuesmap[option.LongName] = option
+				values = append(values, option)
+			}
+		}
+	})
+
+	return values, valuesmap
 }
 
 func (x *Config) expand() map[string]*expandString {
@@ -157,13 +169,17 @@ func (x *Config) expand() map[string]*expandString {
 
 	r, _ := regexp.Compile(`\$\{[^}]*\}`)
 
-	for name, val := range x.values {
+	for name, opt := range x.valuesMap {
 		es := expandString{
 			Name: name,
 		}
 
 		// Find all variable references
-		s := fmt.Sprintf("%v", val)
+		s, ok := opt.Value().(string)
+
+		if !ok {
+			continue
+		}
 
 		matches := r.FindAllStringIndex(s, -1)
 
@@ -227,7 +243,7 @@ func Configure(data interface{}) (*Config, error) {
 		Parser: parser,
 	}
 
-	ret.values = ret.extract()
+	ret.values, ret.valuesMap = ret.extract()
 	ret.expanded = ret.expand()
 
 	if len(GoConfig) != 0 {
@@ -290,16 +306,10 @@ func (x *Config) WriteGoConfig(writer io.Writer) {
 	values := make([]string, 0)
 
 	variables := make([]string, 0, len(x.values))
-	optionmap := make(map[string]*flags.Option)
 
 	// Write all options
-	for _, grp := range x.Parser.Groups {
-		for _, option := range grp.LongNames {
-			name := option.Field.Name
-
-			variables = append(variables, name)
-			optionmap[name] = option
-		}
+	for i, opt := range x.values {
+		variables[i] = opt.LongName
 	}
 
 	sort.Strings(variables)
@@ -309,15 +319,15 @@ func (x *Config) WriteGoConfig(writer io.Writer) {
 			io.WriteString(writer, "\n")
 		}
 
-		option := optionmap[name]
-		val := option.Value.Interface()
+		option := x.valuesMap[name]
+		val := option.Value()
 
 		fmt.Fprintf(writer, "\t// %s\n", option.Description)
 		fmt.Fprintf(writer, "\t%v %T\n", name, val)
 
 		var value string
 
-		if option.Value.Type().Kind() == reflect.String {
+		if _, ok := x.expanded[option.LongName]; ok {
 			value = fmt.Sprintf("%#v", x.Expand(option.LongName))
 		} else {
 			value = fmt.Sprintf("%#v", val)
