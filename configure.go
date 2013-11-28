@@ -323,7 +323,7 @@ func (x *Config) WriteGoConfig(writer io.Writer) {
 		val := option.Value()
 
 		fmt.Fprintf(writer, "\t// %s\n", option.Description)
-		fmt.Fprintf(writer, "\t%v %T\n", name, val)
+		fmt.Fprintf(writer, "\t%v %T\n", strings.Title(name), val)
 
 		var value string
 
