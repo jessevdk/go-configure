@@ -305,7 +305,7 @@ func (x *Config) WriteGoConfig(writer io.Writer) {
 	fmt.Fprintf(writer, "var %s = struct {\n", GoConfigVariable)
 	values := make([]string, 0)
 
-	variables := make([]string, 0, len(x.values))
+	variables := make([]string, len(x.values))
 
 	// Write all options
 	for i, opt := range x.values {
