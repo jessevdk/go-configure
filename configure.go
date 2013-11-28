@@ -15,38 +15,38 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
-	"runtime"
 )
 
 // Options contains all the standard configure options to specify various
 // directories. Use NewOptions to create an instance of this type with the
 // common default values for each variable.
 type Options struct {
-	Prefix        string `long:"prefix" description:"install architecture-independent files in PREFIX"`
-	ExecPrefix    string `long:"execprefix" description:"install architecture-dependent files in EPREFIX"`
-	BinDir        string `long:"bindir" description:"user executables"`
-	LibExecDir    string `long:"libexecdir" description:"program executables"`
-	SysConfDir    string `long:"sysconfdir" description:"read-only single-machine data"`
-	LibDir        string `long:"libdir" description:"program executables"`
-	DataRootDir   string `long:"datarootdir" description:"read-only arch.-independent data root"`
-	DataDir       string `long:"datadir" description:"read-only arc.-independent data"`
-	ManDir        string `long:"mandir" description:"man documentation"`
+	Prefix      string `long:"prefix" description:"install architecture-independent files in PREFIX"`
+	ExecPrefix  string `long:"execprefix" description:"install architecture-dependent files in EPREFIX"`
+	BinDir      string `long:"bindir" description:"user executables"`
+	LibExecDir  string `long:"libexecdir" description:"program executables"`
+	SysConfDir  string `long:"sysconfdir" description:"read-only single-machine data"`
+	LibDir      string `long:"libdir" description:"program executables"`
+	DataRootDir string `long:"datarootdir" description:"read-only arch.-independent data root"`
+	DataDir     string `long:"datadir" description:"read-only arc.-independent data"`
+	ManDir      string `long:"mandir" description:"man documentation"`
 }
 
 // NewOptions creates a new Options with common default values.
 func NewOptions() *Options {
 	return &Options{
-		Prefix:        "/usr/local",
-		ExecPrefix:    "${prefix}",
-		BinDir:        "${execprefix}/bin",
-		LibExecDir:    "${execprefix}/libexec",
-		LibDir:        "${execprefix}/lib",
-		SysConfDir:    "${prefix}/etc",
-		DataRootDir:   "${prefix}/share",
-		DataDir:       "${datarootdir}",
-		ManDir:        "${datarootdir}/man",
+		Prefix:      "/usr/local",
+		ExecPrefix:  "${prefix}",
+		BinDir:      "${execprefix}/bin",
+		LibExecDir:  "${execprefix}/libexec",
+		LibDir:      "${execprefix}/lib",
+		SysConfDir:  "${prefix}/etc",
+		DataRootDir: "${prefix}/share",
+		DataDir:     "${datarootdir}",
+		ManDir:      "${datarootdir}/man",
 	}
 }
 
@@ -135,9 +135,9 @@ func (x *expandString) expand(m map[string]*expandString) string {
 type Config struct {
 	*flags.Parser
 
-	values []*flags.Option
-	valuesMap   map[string]*flags.Option
-	expanded map[string]*expandString
+	values    []*flags.Option
+	valuesMap map[string]*flags.Option
+	expanded  map[string]*expandString
 }
 
 func eachGroup(g *flags.Group, f func(g *flags.Group)) {
@@ -233,7 +233,7 @@ func Configure(data interface{}) (*Config, error) {
 		data = NewOptions()
 	}
 
-	parser := flags.NewParser(data, flags.PrintErrors | flags.IgnoreUnknown)
+	parser := flags.NewParser(data, flags.PrintErrors|flags.IgnoreUnknown)
 
 	if _, err := parser.Parse(); err != nil {
 		return nil, err
@@ -276,8 +276,8 @@ func Configure(data interface{}) (*Config, error) {
 		os.Chmod(Makefile, 0755)
 
 		f, err = os.OpenFile(path.Join(path.Dir(Makefile), "Makefile"),
-		                     os.O_CREATE | os.O_EXCL | os.O_WRONLY,
-		                     0644)
+			os.O_CREATE|os.O_EXCL|os.O_WRONLY,
+			0644)
 
 		if err == nil {
 			fmt.Fprintf(f, "include %s\n", path.Base(Makefile))
