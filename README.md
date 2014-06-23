@@ -18,4 +18,4 @@ This is the most basic example to use the library. Run the configure "script"
 with `go run configure.go` to output a Makefile and a appconfig.go file
 containing all the configured variables in an easy to access go variable.
 
-More information can be found in the godocs: <http://go.pkgdoc.org/github.com/jessevdk/go-configure>
+More information can be found in the documentation: <http://godoc.org/github.com/jessevdk/go-configure>
